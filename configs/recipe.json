@@ -29,6 +29,6 @@
   },
   "evaluation": "18class argmax -> group mapping; pooled original-point confusion; None included",
   "fresh_training_bitwise_reproduction_verified": false,
-  "reported_metric": "5-group-B original-point macro mIoU",
+  "reported_metric": "aggregated-5-class original-point macro mIoU",
   "checkpoint_choice": "User-specified fixed epoch30"
 }

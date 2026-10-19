@@ -35506,7 +35506,7 @@
   "checkpoint": "epoch30 head export; see PROVENANCE.json",
   "checkpoint_sha256": "c4c5019e6fe58874b59ad8ba3e30fd2f635c9ff566f19a7bca9f61526b0f19ea",
   "reported_metric": {
-    "name": "5-group-B original-point macro mIoU",
+    "name": "aggregated-5-class original-point macro mIoU",
     "value": 0.7114659424153018
   }
 }

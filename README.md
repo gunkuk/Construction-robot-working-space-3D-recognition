@@ -1,6 +1,6 @@
 # Construction Robot Work-Surface Recognition
 
-Semantic segmentation of construction-site point clouds for identifying work surfaces and exclusion regions for **plastering and painting robots**. The published checkpoint is **epoch 30**, evaluated with **5-group-B**. Its full-Test mIoU is **0.711466**.
+Semantic segmentation of construction-site point clouds to identify work surfaces and exclusion regions for **construction robots, such as plastering and painting robots**. The published model checkpoint at **epoch 30** achieves a full-test **mean Intersection over Union (mIoU) of 0.711466**, evaluated using an **aggregated 5-class taxonomy** formed by merging the dataset’s original 18 classes.
 
 This is an offline point-cloud study, rather than a validated robot control or surface-readiness system.
 
@@ -26,7 +26,7 @@ The original benchmark scene assignments are unchanged. **Test is separated by s
 - **The model was not retrained with a 5-group loss.** Evaluation merges the 18-class argmax predictions and ground truth into the five groups below.
 - Epoch30 was fixed as the public checkpoint by the project owner. It was not automatically selected as the best Test result. See the [recipe](configs/recipe.json).
 
-## Final result: epoch 30 /5-group-B
+## Final result: epoch 30 / aggregated 5-class taxonomy
 
 Evaluation covers all **96 Test scenes and 2,294,339,698 original points**. Each IoU is calculated from the confusion matrix pooled across the complete Test split. The reported mIoU is the unweighted mean of the five group IoUs.
 
@@ -51,7 +51,7 @@ The Openings IoU is **0.154761**. The overall mean therefore does not establish 
 
 ![Validation performance through epoch 30](results/figures/learning_curve.png)
 
-Markers denote measured checkpoints only. Saved Validation predictions were regrouped into 5-group-B; this does not mean the model was trained with that grouping as its loss. These are Validation curves, not Test learning curves.
+Markers denote measured checkpoints only. Saved Validation predictions were regrouped according to the aggregated 5-class taxonomy; this does not mean the model was trained with that grouping as its loss. These are Validation curves, not Test learning curves.
 
 Test results had already been exposed before this user-requested additional evaluation. They should not be presented as a new, untouched final holdout. This semantic-only head does not produce instance masks or Mask AP.
 
@@ -70,7 +70,7 @@ For actual GPU evaluation, cache generation, and explicitly requested retraining
 
 ```text
 README.md / run.py   Overview and execution entry point
-configs/            Training recipe and 5-group-B definition
+configs/            Training recipe and aggregated 5-class taxonomy definition
 data/               Official scene memberships and class names
 src/                Head, cache/evaluation code, and attributed Utonia source
 checkpoints/        Published epoch 30 head only

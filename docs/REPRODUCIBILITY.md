@@ -9,7 +9,7 @@ pip install -r docs/setup/requirements-metrics.txt
 python run.py verify-results
 ```
 
-This recomputes 5-group-B mIoU and group IoUs from the published full-Test confusion matrix. It does not execute GPU inference.
+This recomputes mIoU and group IoUs under the aggregated 5-class taxonomy from the published full-Test confusion matrix. It does not execute GPU inference.
 
 ## 2. Model environment
 
