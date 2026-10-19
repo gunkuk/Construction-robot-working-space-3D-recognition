@@ -1,0 +1,15 @@
+{
+  "release_epoch": 30,
+  "source_run": "E029-utonia-train-until-user-stop",
+  "source_checkpoint_sha256": "c4c5019e6fe58874b59ad8ba3e30fd2f635c9ff566f19a7bca9f61526b0f19ea",
+  "export_head_sha256": "030a5de167729339ca0a749d1a0d80a214e7d23558aaeddf374215b7634f8ced",
+  "test_evidence_run": "E032-test-epoch30-50-requested-groups",
+  "test_result_source_sha256": "d9471bf07236a3899be41941abea689ee151ac1a25f242f672466224f4c9eb6f",
+  "official_metadata_sha256": "29e2cd7e142d4bf04e8de4c947ba0c044cd3a07a8ca59c612da54f871f6e26b7",
+  "backbone_sha256": "e49a1944403d4ec3df459537fb7d5b132326736d0ebdb7c5a74868f3fa50d137",
+  "scientific_source_hashes": {
+    "head.py": "fa6498253fb0f37233896a4153dc226db52b0e5265764c5d114cb91d1534b990",
+    "scene_cache.py": "6b347bbc8ee995c8ba4f0a8a0cdf3090f9f8ccbd58f55405a2ce5d87b9cbad9a",
+    "metrics.py": "c90ac45db67cb4353fbd216a6d9be23e4d13ff246d8e82bd00319f04fde4e439"
+  }
+}

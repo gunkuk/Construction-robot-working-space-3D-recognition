@@ -1,0 +1,74 @@
+[
+  {
+    "number": 0,
+    "name": "None"
+  },
+  {
+    "number": 1,
+    "name": "Ceiling"
+  },
+  {
+    "number": 2,
+    "name": "Slanted Ceiling"
+  },
+  {
+    "number": 3,
+    "name": "Ceiling Cutout"
+  },
+  {
+    "number": 4,
+    "name": "Floor"
+  },
+  {
+    "number": 5,
+    "name": "Wall"
+  },
+  {
+    "number": 6,
+    "name": "Drywall"
+  },
+  {
+    "number": 7,
+    "name": "Wall Cutout"
+  },
+  {
+    "number": 8,
+    "name": "Parapet"
+  },
+  {
+    "number": 9,
+    "name": "Beam"
+  },
+  {
+    "number": 10,
+    "name": "Column"
+  },
+  {
+    "number": 11,
+    "name": "Staircase"
+  },
+  {
+    "number": 12,
+    "name": "Window Cutout"
+  },
+  {
+    "number": 13,
+    "name": "Window"
+  },
+  {
+    "number": 14,
+    "name": "Door Rough Opening"
+  },
+  {
+    "number": 15,
+    "name": "Facade Element"
+  },
+  {
+    "number": 16,
+    "name": "Elevator Doors"
+  },
+  {
+    "number": 17,
+    "name": "TGA"
+  }
+]

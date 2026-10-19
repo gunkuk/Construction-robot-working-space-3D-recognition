@@ -1,0 +1,12 @@
+--extra-index-url https://download.pytorch.org/whl/cu124
+--find-links https://data.pyg.org/whl/torch-2.5.1+cu124.html
+numpy==1.26.4
+torch==2.5.1+cu124
+torch-scatter==2.1.2+pt25cu124
+spconv-cu120==2.3.6
+timm==1.0.30
+huggingface-hub==2.2.0
+addict==2.4.0
+scipy==1.17.1
+matplotlib==3.11.2
+packaging==26.3

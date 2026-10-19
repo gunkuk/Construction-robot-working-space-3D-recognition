@@ -1,0 +1,2 @@
+# Preserve exact source/checkpoint bytes for cache and provenance SHA256 verification.
+* -text
