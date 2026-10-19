@@ -1,8 +1,7 @@
 # Construction Robot Work-Surface Recognition
 
-Semantic segmentation of construction-site point clouds for identifying work surfaces and exclusion regions for **plastering and painting robots**. The published checkpoint is **epoch 30**, evaluated with **5-group-B**. Its full-Test mIoU is **0.711466**.
-
-This is an offline point-cloud study, rather than a validated robot control or surface-readiness system.
+Semantic segmentation of construction-site point clouds to identify work surfaces and exclusion regions for construction robots, such as plastering and painting robots. The published model checkpoint at epoch 30 achieves a full-test mean Intersection over Union **(mIoU) of 0.711466**, evaluated across **five semantic groups** formed by merging the dataset’s original 18 classes.
+This is an offline **point-cloud study**, rather than a validated robot control or surface-readiness system.
 
 ![Method overview](results/figures/pipeline.png)
 
