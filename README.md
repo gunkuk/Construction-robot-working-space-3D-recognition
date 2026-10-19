@@ -1,62 +1,81 @@
-# 건설로봇 작업면 인식 — Rohbau3D · epoch30 · 5-group-B
+# Construction Robot Work-Surface Recognition
 
-미장·도장 로봇의 작업면과 작업 제외 영역을 구분하기 위한 **3D 점군 의미 분할 연구**입니다. 공개 기준은 **epoch30 / 5-group-B**이며, 최종 Test mIoU는 **0.711466**입니다. 현재는 오프라인 점군 평가이며 로봇 제어·현장 작업 가능성을 검증한 결과는 아닙니다.
+Semantic segmentation of construction-site point clouds for identifying work surfaces and exclusion regions for **plastering and painting robots**. The published checkpoint is **epoch 30**, evaluated with **5-group-B**. Its full-Test mIoU is **0.711466**.
 
-![방법 개요](results/figures/pipeline.png)
+This is an offline point-cloud study, rather than a validated robot control or surface-readiness system.
 
-## 데이터와 공식 분할
+![Method overview](results/figures/pipeline.png)
 
-[Rohbau3D](https://open-data.unibw.de/dataset.xhtml?persistentId=doi:10.60776/ZWJFI4)의 Dataverse 4.0 metadata snapshot을 사용했습니다. 좌표·RGB·법선을 입력으로 사용하고, 모델의 출력과 정답 라벨은 원본 18종을 유지했습니다. 데이터는 저장소에 포함하지 않습니다.
+## Dataset and benchmark split
 
-| 분할 | 장면 수 | 역할 | 현장 관계 |
+We use [Rohbau3D](https://open-data.unibw.de/dataset.xhtml?persistentId=doi:10.60776/ZWJFI4), with the Dataverse 4.0 metadata snapshot used in this study. Inputs are XYZ coordinates, RGB colors, and surface normals. The model retains the original 18 semantic labels, including None. Dataset files are not redistributed.
+
+| Split | Scenes | Purpose | Site relationship |
 |---|---:|---|---|
-| Train | 354 | head 학습 | 12개 현장 |
-| Validation | 54 | 개발 성능 관측 | Train과 같은 12개 현장, 장면 중복 없음 |
-| Test | 96 | 성능 평가 | 별도 현장 site_00(36장면)·site_08(60장면) |
+| Train | 354 | Train the segmentation head | 12 sites |
+| Validation | 54 | Observe development performance | Same 12 sites as Train; no shared scenes |
+| Test | 96 | Report performance | Separate sites: site_00(36 scenes), site_08(60 scenes) |
 
-공식 benchmark 분할을 변경하지 않았습니다. **Test는 현장 단위로 분리되지만 Train/Validation은 현장을 공유합니다.** [정확한 장면 목록](data/splits.json)
+The original benchmark scene assignments are unchanged. **Test is separated by site; Train and Validation share sites.** Exact memberships are in [data/splits.json](data/splits.json).
 
-## 모델과 학습
+## Model and training
 
-- Utonia tiny 백본을 고정하고 다중 해상도 특징을 융합하는 18종 head만 학습했습니다.
-- 원본 좌표 단위 voxel 0.02, 블록 16,384점, FP16 특징 캐시와 원본점 inverse 복원을 사용했습니다.
-- 실제 학습 손실은 **18종 CrossEntropy**, 최적화는 AdamW(lr 0.001, weight decay 0.01)입니다.
-- **5-group-B로 새로 학습한 모델은 아닙니다.** 18종 argmax 예측과 정답을 아래 5개 그룹으로 병합해 평가했습니다.
-- 사용자가 공개 checkpoint를 epoch30으로 고정했습니다. Test 최고점을 자동 선택한 결과가 아닙니다. [학습 설정](configs/recipe.json)
+- Frozen **Utonia tiny** backbone with a trainable multi-scale 18-class segmentation head.
+- Voxel size 0.02 in native coordinate units; blocks of 16,384 representative points; cached FP16 backbone features; inverse mapping to every original point.
+- Training loss: **18-class CrossEntropy**. Optimizer: AdamW, learning rate 0.001, weight decay 0.01.
+- **The model was not retrained with a 5-group loss.** Evaluation merges the 18-class argmax predictions and ground truth into the five groups below.
+- Epoch30 was fixed as the public checkpoint by the project owner. It was not automatically selected as the best Test result. See the [recipe](configs/recipe.json).
 
-## 최종 성능: epoch30 · 5-group-B
+## Final result: epoch 30 /5-group-B
 
-Test 96장면의 **원본점 2,294,339,698개를 모두 평가**했습니다. 아래 IoU는 전체 Test 혼동행렬에서 TP/(TP+FP+FN)로 계산했으며, mIoU는 다섯 값의 산술평균입니다.
+Evaluation covers all **96 Test scenes and 2,294,339,698 original points**. Each IoU is calculated from the confusion matrix pooled across the complete Test split. The reported mIoU is the unweighted mean of the five group IoUs.
 
-| 그룹 | 원본 라벨 번호 | Test IoU |
+| Group | Original label IDs | Test IoU |
 |---|---|---:|
-| Wall+Drywall | 5 + 6 | 0.855781 |
-| Openings | 12 + 13 + 3 + 7 + 14 | 0.154761 |
+| Wall + Drywall | 5,6 | 0.855781 |
+| Openings | 12,13,3,7,14 | 0.154761 |
 | Floor | 4 | 0.934807 |
-| Ceiling+Slanted Ceiling | 1 + 2 | 0.955494 |
-| Other | 0 + 8 + 9 + 10 + 11 + 15 + 16 + 17 | 0.656487 |
-| **평균 mIoU** | **5개 그룹의 산술평균** | **0.711466** |
+| Ceiling + Slanted Ceiling | 1,2 | 0.955494 |
+| Other | 0,8,9,10,11,15,16,17 | 0.656487 |
+| **mIoU** | **Mean of five group IoUs** | **0.711466** |
 
-Openings는 **Window + Window Cutout + Ceiling Cutout + Wall Cutout + Door Rough Opening**, 천장 그룹은 **Ceiling + Slanted Ceiling**입니다. None은 Other에 포함합니다. [번호 매핑](configs/groups.json) · [표 CSV](results/group_scores.csv)
+**Openings** combines Window, Window Cutout, Ceiling Cutout, Wall Cutout, and Door Rough Opening. None belongs to Other. See the [exact mapping](configs/groups.json) and [CSV table](results/group_scores.csv).
 
-![Test 그룹별 IoU](results/figures/grouped_test.png)
+![Test group IoUs](results/figures/grouped_test.png)
 
-개구부 그룹 IoU는 **0.154761**입니다. 전체 mIoU가 개구부 인식 성능을 뜻하지 않으며, 작업 제외 영역의 안정적인 인식이 해결됐다고 주장하지 않습니다.
+The Openings IoU is **0.154761**. The overall mean therefore does not establish reliable recognition of robot exclusion regions.
 
-![Test 오분류 분포](results/figures/confusion5.png)
+![Test confusion matrix](results/figures/confusion5.png)
 
-## 30epoch까지의 Validation 성능 변화
+## Validation curves through epoch 30
 
-![5-group-B 학습곡선](results/figures/learning_curve.png)
+![Validation performance through epoch 30](results/figures/learning_curve.png)
 
-점으로 표시한 epoch만 실측했습니다. 저장된 각 epoch의 Validation 예측을 동일한 5-group-B 정의로 다시 집계한 곡선이며, 5-group-B 손실로 학습했다는 뜻은 아닙니다. Test 학습곡선으로 해석하지 않습니다. Test는 이미 노출된 상태에서 사용자 요청으로 추가 평가했으므로 새로운 미관측 독립 최종검증으로 표현하지 않습니다.
+Markers denote measured checkpoints only. Saved Validation predictions were regrouped into 5-group-B; this does not mean the model was trained with that grouping as its loss. These are Validation curves, not Test learning curves.
 
-## 실행과 재현
+Test results had already been exposed before this user-requested additional evaluation. They should not be presented as a new, untouched final holdout. This semantic-only head does not produce instance masks or Mask AP.
 
-```powershell
+## Run
+
+From the repository root, verify the published scores on CPU:
+
+```bash
+pip install -r docs/setup/requirements-metrics.txt
 python run.py verify-results
 ```
 
-공개된 전체 Test 혼동행렬에서 최종 mIoU와 그룹별 IoU를 재계산합니다. 실제 GPU 평가·특징 캐시 생성·명시적 재학습 명령은 [재현 안내](docs/REPRODUCIBILITY.md)를 따릅니다. 외부 데이터와 백본 가중치는 별도로 준비합니다. 현재 head는 semantic-only이며 instance Mask AP를 산출하지 않습니다.
+For actual GPU evaluation, cache generation, and explicitly requested retraining, see [Reproducibility](docs/REPRODUCIBILITY.md). Obtain the external dataset and pretrained backbone separately.
 
-[출처와 라이선스](THIRD_PARTY_NOTICES.md) · [가중치·원근거 해시](PROVENANCE.json)
+## Repository layout
+
+```text
+README.md / run.py   Overview and execution entry point
+configs/            Training recipe and 5-group-B definition
+data/               Official scene memberships and class names
+src/                Head, cache/evaluation code, and attributed Utonia source
+checkpoints/        Published epoch 30 head only
+results/            Test evidence, CSV tables, and figures
+docs/               Setup, provenance, and third-party notices
+```
+
+[Sources and licenses](docs/THIRD_PARTY_NOTICES.md) · [Checkpoint provenance](docs/provenance/PROVENANCE.json) · [File manifest](docs/provenance/MANIFEST.json)

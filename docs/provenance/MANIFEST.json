@@ -10,29 +10,13 @@
       "bytes": 73,
       "sha256": "6a6fadef141e69785da3caa6f2866d66a59853e98cd853d8b787561802796a8e"
     },
-    "PROVENANCE.json": {
-      "bytes": 927,
-      "sha256": "f8011bd5b7478b78fb5585b0a82262e3dc6abe201e7246ab0c7697d8941e3ed0"
-    },
     "README.md": {
-      "bytes": 4269,
-      "sha256": "330acf3587e2566b8d5835fa9732249c83042f9c7f87e6009f4a8e41c3544a39"
-    },
-    "requirements-metrics.txt": {
-      "bytes": 15,
-      "sha256": "48fb15820d59a384f39c743742907be99a3968d17985428ec35cb1808edaa880"
-    },
-    "requirements.txt": {
-      "bytes": 313,
-      "sha256": "b5b0bb7279da544273f4dbd11c0c0b8d90c06a73278ede8145e02db7c7a0c248"
+      "bytes": 4667,
+      "sha256": "c3812cbfe95d2dd8b30b8727b0ce6b118006804b6f43dd807deaa86b635e461f"
     },
     "run.py": {
       "bytes": 8830,
       "sha256": "ec1627cbfa6570fd5f1b761d1bf4de6a2baae58e0b110744389578a54bf3accf"
-    },
-    "THIRD_PARTY_NOTICES.md": {
-      "bytes": 448,
-      "sha256": "8d2c85657d24553f00f58781409455c58ef9a6addce094bac0d4138c1c4a279e"
     },
     "checkpoints/head_epoch30.pth": {
       "bytes": 180446,
@@ -54,13 +38,29 @@
       "bytes": 14169,
       "sha256": "6b325cad51ac38f7872bcd6689780be28821d8e640a382273631c01bbc6e6792"
     },
-    "docs/environment_observed.json": {
+    "docs/REPRODUCIBILITY.md": {
+      "bytes": 3553,
+      "sha256": "f071c0fb77675e2c5586df318dcae54b0f8d1f38f1ac1307a87155f2a285a36c"
+    },
+    "docs/THIRD_PARTY_NOTICES.md": {
+      "bytes": 451,
+      "sha256": "e45c13f61526f86b569a281480069d94f4a5c7f6cc61fbe3d711051646df2ec2"
+    },
+    "docs/provenance/PROVENANCE.json": {
+      "bytes": 927,
+      "sha256": "f8011bd5b7478b78fb5585b0a82262e3dc6abe201e7246ab0c7697d8941e3ed0"
+    },
+    "docs/setup/environment_observed.json": {
       "bytes": 1586,
       "sha256": "97d3345d7ab7ead86c155c450b3f285e996ede524dd6303f27f66f9ad3c4c531"
     },
-    "docs/REPRODUCIBILITY.md": {
-      "bytes": 3168,
-      "sha256": "117d5f0492ff191381d6aefa07dac9fcf49b8f085a19e9bec87583df7b639f21"
+    "docs/setup/requirements-metrics.txt": {
+      "bytes": 15,
+      "sha256": "48fb15820d59a384f39c743742907be99a3968d17985428ec35cb1808edaa880"
+    },
+    "docs/setup/requirements.txt": {
+      "bytes": 313,
+      "sha256": "b5b0bb7279da544273f4dbd11c0c0b8d90c06a73278ede8145e02db7c7a0c248"
     },
     "results/grouped_epoch30.json": {
       "bytes": 916,

@@ -1,35 +1,62 @@
-# 실행 및 재현 범위
+# Reproducibility and execution
 
-## 1. 저장된 성능 수치 확인(CPU)
+## 1. Verify the published result on CPU
 
-NumPy 설치 후 `python run.py verify-results`. 저장된 전체Test96 혼동행렬에서5-group-B의 mIoU와그룹별IoU를 다시 계산한다. GPU 추론 검증과는 다르다.
+From the repository root:
 
-## 2. 실행환경
+```bash
+pip install -r docs/setup/requirements-metrics.txt
+python run.py verify-results
+```
 
-관측환경은 Python3.11,PyTorch2.5.1+cu124,Windows,RTX3070Ti8GB다. 정확한 패키지는 environment_observed.json에 보존했다. FlashAttention은 비활성화했다. requirements.txt는 관측한 핵심 버전이며 새 PC에서 일괄 설치 성공을 검증한 lockfile이 아니다. 특히 Windows spconv-cu120 2.3.6과 torch-scatter wheel의 플랫폼/CUDA 호환을 확인해야 한다. 기존 PC의 실행환경 또는 공식 Pointcept 설치 경로를 사용한다. 설치 파일·가상환경을 Git에 넣지 않는다.
+This recomputes 5-group-B mIoU and group IoUs from the published full-Test confusion matrix. It does not execute GPU inference.
 
-## 3. 공식 데이터 검사
+## 2. Model environment
 
-`python run.py check-data --data-root D:/datasets/rohbau3d`
+The observed environment used Python 3.11, PyTorch 2.5.1+cu124, Windows, and an RTX 3070 Ti (8 GB). FlashAttention was disabled. See [observed package versions](setup/environment_observed.json) and [core requirements](setup/requirements.txt).
 
-원본배열은 데이터 제공처에서 별도로 받는다. data/splits.json은 공식354/54/96장면 목록이다. check-data는 파일 존재를 검사하며 데이터 전체 checksum 인증은 아니다.
+The requirements describe the observed versions, rather than a clean-machine installation that has been independently verified. Windows spconv-cu120 2.3.6 and the torch-scatter wheel require compatible Python/CUDA builds. Virtual environments and installation wheels are not included. Utonia source attribution is retained in [third-party notices](THIRD_PARTY_NOTICES.md).
 
-## 4. 기존 캐시로 실제 평가
+## 3. Check the official dataset
 
-`python run.py evaluate --data-root D:/datasets/rohbau3d --cache-root D:/rohbau3d_utonia_work/cache_spill/94739f87a44ad936 --split test --output runs/test30`
+```bash
+python run.py check-data --data-root D:/datasets/rohbau3d
+```
 
-백본이동결돼있으므로기존특징을재사용하고공개epoch30 head를GPU에서실제추론한다. `--scene-limit 1`은동작확인용부분평가이며최종성능이아니다. 전체Test는96장면·2,294,339,698원본점을평가해야한다. 개인경로는명령인자로제공하며소스에저장하지않는다.
+Download the original arrays separately. `data/splits.json` preserves the official 354/54/96 scene assignments. This command checks required file presence, not complete dataset checksums.
 
-## 5. 특징캐시 새로 생성
+## 4. Evaluate the published head with an existing cache
 
-`python run.py build-cache --data-root D:/datasets/rohbau3d --cache-root D:/derived/rohbau3d/fresh_cache --backbone weights/utonia_tiny.pth --split test`
+```bash
+python run.py evaluate --data-root D:/datasets/rohbau3d --cache-root D:/rohbau3d_utonia_work/cache_spill/94739f87a44ad936 --split test --output runs/test30
+```
 
-backbone은공식배포처에서받고configs/recipe.json의SHA256과일치해야한다. 원본폴더와캐시폴더는분리한다. 학습용은train/val도각각실행한다. 전체기존캐시는약112GB이며공간여유를별도로확보한다. 새캐시생성은기존캐시와다른namespace를사용한다. encoder의random serialization과GPU수치차이가있어원본재생성결과가발표수치와완전히같다고보장하지않는다. 이패키지에서원본으로부터전체캐시재생성/전체재학습은새로검증하지않았다.
+The backbone is frozen, so its verified feature cache is reused while the epoch 30 head executes new GPU inference. All 96 scenes and 2,294,339,698 original points are required for the full-Test result. `--scene-limit 1` performs a partial smoke check. Do not report partial scores as final performance.
 
-## 6. 재학습(명시적으로 실행할 때만)
+Paths are command-line arguments. No personal dataset or cache path is embedded in the release CLI.
 
-먼저 `python run.py train --cache-root D:/derived/rohbau3d/fresh_cache --dry-run`으로계획을확인한다.
+## 5. Build a fresh backbone feature cache
 
-`python run.py train --data-root D:/datasets/rohbau3d --cache-root D:/derived/rohbau3d/fresh_cache --epochs 30 --output runs/retrain --start-training`
+```bash
+python run.py build-cache --data-root D:/datasets/rohbau3d --cache-root D:/derived/rohbau3d/fresh_cache --backbone weights/utonia_tiny.pth --split test
+```
 
-고정백본특징의head만18종CE/AdamW로학습하고매epoch저장·5epoch전체Val평가한다. 이것은공개recipe의독립재학습adapter이며과거캐시생성/RNG/중간재개연대기를복원하는프로그램이아니다. 과거원실행소스와감독기록은로컬프로젝트에별도보존한다. 이번패키지검증에서학습을재개하지않았다. Test를재학습선택에사용하지않는다.
+Obtain `utonia_tiny.pth` from the official distribution and check the SHA256 in `configs/recipe.json`. Keep original data and derived caches separate. Run cache construction for Train and Validation as well if retraining is required. The historical full feature cache is approximately 112 GB, so reserve additional working space.
+
+A fresh build uses a separate cache namespace. Random serialization and GPU numerical behavior mean rebuilt features are not guaranteed to match the historical cache bit for bit. Rebuilding every scene and retraining all 30 epochs were not repeated as part of release verification.
+
+## 6. Retrain only when explicitly requested
+
+Inspect the recipe without starting training:
+
+```bash
+python run.py train --cache-root D:/derived/rohbau3d/fresh_cache --dry-run
+```
+
+Start an independent retraining run:
+
+```bash
+python run.py train --data-root D:/datasets/rohbau3d --cache-root D:/derived/rohbau3d/fresh_cache --epochs 30 --output runs/retrain --start-training
+```
+
+This trains the head on frozen features with 18-class CrossEntropy/AdamW, saves each epoch, and evaluates the full Validation split every 5 epochs. The release adapter does not reconstruct the historical cache-generation/RNG/resume chronology. Original local experiment records are preserved separately. Release verification did not restart training. Do not use Test for retraining decisions.
